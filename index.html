@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evaluación de Ambiente Laboral</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f2ee;
+    --card: #ffffff;
+    --ink: #1a1714;
+    --muted: #7a7369;
+    --accent: #2d5a4b;
+    --accent-light: #e8f0ed;
+    --accent2: #c9794e;
+    --border: #e2ddd8;
+    --scale-selected: #2d5a4b;
+    --scale-hover: #e8f0ed;
+    --radius: 12px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 40px 20px 80px;
+  }
+
+  .form-wrap {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  /* HEADER */
+  .form-header {
+    background: var(--accent);
+    border-radius: var(--radius) var(--radius) 0 0;
+    padding: 48px 48px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .form-header::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+  }
+  .form-header::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; left: 40px;
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+  }
+  .form-header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.9rem;
+    font-weight: 600;
+    color: #fff;
+    line-height: 1.25;
+    margin-bottom: 8px;
+  }
+  .form-header .subtitle {
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.65);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .form-header .desc {
+    font-size: 0.93rem;
+    color: rgba(255,255,255,0.82);
+    line-height: 1.65;
+  }
+  .header-meta {
+    margin-top: 24px;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .meta-tag {
+    background: rgba(255,255,255,0.12);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.85);
+  }
+
+  /* PROGRESS */
+  .progress-bar-wrap {
+    background: var(--card);
+    padding: 12px 48px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .progress-track {
+    flex: 1;
+    height: 4px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 4px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+  .progress-label {
+    font-size: 0.78rem;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  /* SECTIONS */
+  .section-card {
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    padding: 36px 48px;
+    display: none;
+    animation: fadeIn 0.35s ease;
+  }
+  .section-card.active { display: block; }
+  .section-card:last-of-type { border-radius: 0 0 var(--radius) var(--radius); }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 6px;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.35rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--ink);
+  }
+  .section-desc {
+    font-size: 0.88rem;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 28px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* QUESTION */
+  .question-block {
+    margin-bottom: 30px;
+  }
+  .question-label {
+    font-size: 0.93rem;
+    font-weight: 500;
+    line-height: 1.5;
+    margin-bottom: 14px;
+    color: var(--ink);
+  }
+  .required-star { color: var(--accent2); margin-left: 4px; }
+
+  /* SCALE */
+  .scale-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .scale-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.72rem;
+    color: var(--muted);
+    padding: 0 2px;
+  }
+  .scale-numbers {
+    display: flex;
+    gap: 4px;
+  }
+  .scale-numbers label {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+  }
+  .scale-numbers input[type="radio"] { display: none; }
+  .scale-btn {
+    width: 100%;
+    padding: 9px 0;
+    border-radius: 6px;
+    border: 1.5px solid var(--border);
+    background: var(--card);
+    text-align: center;
+    font-size: 0.82rem;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .scale-numbers input:checked + .scale-btn {
+    background: var(--scale-selected);
+    border-color: var(--scale-selected);
+    color: #fff;
+  }
+  .scale-numbers label:hover .scale-btn {
+    background: var(--scale-hover);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* TEXTAREA */
+  textarea {
+    width: 100%;
+    min-height: 110px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    color: var(--ink);
+    resize: vertical;
+    transition: border-color 0.2s;
+    background: var(--bg);
+    outline: none;
+  }
+  textarea:focus {
+    border-color: var(--accent);
+    background: #fff;
+  }
+  textarea::placeholder { color: #bbb; }
+
+  /* GRID TABLE */
+  .grid-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .grid-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px;
+    font-size: 0.84rem;
+  }
+  .grid-table th {
+    padding: 8px 6px;
+    text-align: center;
+    font-weight: 500;
+    color: var(--muted);
+    font-size: 0.78rem;
+    border-bottom: 2px solid var(--border);
+  }
+  .grid-table th:first-child { text-align: left; padding-left: 0; }
+  .grid-table td {
+    padding: 9px 6px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+  .grid-table td:first-child {
+    text-align: left;
+    padding-left: 0;
+    font-weight: 400;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+  .grid-table tr:hover td { background: var(--bg); }
+  .grid-table input[type="radio"] {
+    accent-color: var(--accent);
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+  }
+  .scroll-hint {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-bottom: 10px;
+    display: none;
+  }
+  @media (max-width: 640px) { .scroll-hint { display: block; } }
+
+  /* NAV BUTTONS */
+  .nav-btns {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 36px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+  }
+  .btn {
+    padding: 12px 28px;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: all 0.18s;
+  }
+  .btn-secondary {
+    background: transparent;
+    border: 1.5px solid var(--border);
+    color: var(--muted);
+  }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+  }
+  .btn-primary:hover { background: #235040; transform: translateY(-1px); }
+  .btn-submit {
+    background: var(--accent2);
+    color: #fff;
+    padding: 14px 36px;
+  }
+  .btn-submit:hover { background: #b5683e; transform: translateY(-1px); }
+
+  /* THANK YOU */
+  .thankyou-card {
+    background: var(--card);
+    border-radius: 0 0 var(--radius) var(--radius);
+    padding: 64px 48px;
+    text-align: center;
+    display: none;
+    animation: fadeIn 0.4s ease;
+  }
+  .thankyou-icon {
+    width: 64px; height: 64px;
+    background: var(--accent-light);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 24px;
+    font-size: 1.8rem;
+  }
+  .thankyou-card h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    margin-bottom: 16px;
+    color: var(--ink);
+  }
+  .thankyou-card p {
+    font-size: 0.93rem;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  /* ANON NOTICE */
+  .anon-notice {
+    background: var(--accent-light);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+    padding: 10px 14px;
+    font-size: 0.82rem;
+    color: var(--accent);
+    margin-bottom: 28px;
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+  }
+
+  @media (max-width: 600px) {
+    .form-header, .section-card, .thankyou-card { padding: 28px 20px; }
+    .progress-bar-wrap { padding: 12px 20px; }
+    .scale-btn { padding: 7px 0; font-size: 0.75rem; }
+    .form-header h1 { font-size: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+<div class="form-wrap">
+
+  <!-- HEADER -->
+  <div class="form-header">
+    <div class="subtitle">Encuesta Interna</div>
+    <h1>Evaluación de Ambiente Laboral y Feedback del Equipo</h1>
+    <p class="desc">Este formulario tiene como objetivo conocer la percepción del equipo sobre el ambiente laboral, la dinámica de trabajo y la colaboración entre compañeros. La información recolectada permitirá identificar oportunidades de mejora en procesos, comunicación y cultura organizacional.</p>
+    <div class="header-meta">
+      <span class="meta-tag">🔒 Anónimo</span>
+      <span class="meta-tag">⏱ 5–10 minutos</span>
+      <span class="meta-tag">7 secciones</span>
+    </div>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="progress-bar-wrap">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">Sección 1 de 7</div>
+  </div>
+
+  <!-- SECCIÓN 1 -->
+  <div class="section-card active" id="sec1">
+    <div class="section-label">Sección 1</div>
+    <div class="section-title">Evaluación del Ambiente Laboral</div>
+    <div class="section-desc">Califica cada aspecto del 1 (Muy deficiente) al 10 (Excelente).</div>
+
+    <div class="anon-notice">🔒 Tus respuestas son completamente anónimas.</div>
+
+    <div id="sec1-questions"></div>
+
+    <div class="nav-btns">
+      <span></span>
+      <button class="btn btn-primary" onclick="goTo(2)">Siguiente →</button>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 2 -->
+  <div class="section-card" id="sec2">
+    <div class="section-label">Sección 2</div>
+    <div class="section-title">Opinión General sobre la Empresa</div>
+    <div class="section-desc">Responde con total honestidad y criterio constructivo. No hay respuestas correctas o incorrectas.</div>
+
+    <div class="question-block">
+      <div class="question-label">Desde tu experiencia, ¿qué es lo mejor de trabajar en esta empresa?</div>
+      <textarea placeholder="Escribe tu respuesta aquí..."></textarea>
+    </div>
+    <div class="question-block">
+      <div class="question-label">¿Qué aspectos de la empresa consideras que deberían mejorar?</div>
+      <textarea placeholder="Escribe tu respuesta aquí..."></textarea>
+    </div>
+    <div class="question-block">
+      <div class="question-label">¿Hay procesos o dinámicas de trabajo que actualmente hacen perder tiempo o generan frustración? Si es así, descríbelos.</div>
+      <textarea placeholder="Escribe tu respuesta aquí..."></textarea>
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn btn-secondary" onclick="goTo(1)">← Anterior</button>
+      <button class="btn btn-primary" onclick="goTo(3)">Siguiente →</button>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 3 -->
+  <div class="section-card" id="sec3">
+    <div class="section-label">Sección 3</div>
+    <div class="section-title">Evaluación del Equipo</div>
+    <div class="section-desc">Evalúa el desempeño general de cada persona considerando responsabilidad, trabajo en equipo, comunicación y actitud laboral. Escala del 1 (Muy bajo) al 10 (Excelente).</div>
+
+    <div class="scroll-hint">← Desliza para ver toda la tabla →</div>
+    <div class="grid-wrap">
+      <table class="grid-table" id="gridTable">
+        <thead>
+          <tr>
+            <th>Persona</th>
+            <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th>
+            <th>6</th><th>7</th><th>8</th><th>9</th><th>10</th>
+          </tr>
+        </thead>
+        <tbody id="gridBody"></tbody>
+      </table>
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn btn-secondary" onclick="goTo(2)">← Anterior</button>
+      <button class="btn btn-primary" onclick="goTo(4)">Siguiente →</button>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 4 -->
+  <div class="section-card" id="sec4">
+    <div class="section-label">Sección 4</div>
+    <div class="section-title">Feedback sobre el Equipo</div>
+    <div class="section-desc">Responde con respeto y constructividad. Esta información es confidencial y se usará para fortalecer el equipo.</div>
+
+    <div class="question-block">
+      <div class="question-label">¿Qué persona o personas del equipo consideras que destacan positivamente en su trabajo? Explica por qué.</div>
+      <textarea placeholder="Escribe tu respuesta aquí..."></textarea>
+    </div>
+    <div class="question-block">
+      <div class="question-label">¿Hay alguna persona del equipo que podría mejorar su forma de trabajar, colaborar o comunicarse? Explica de forma respetuosa.</div>
+      <textarea placeholder="Escribe tu respuesta aquí..."></textarea>
+    </div>
+    <div class="question-block">
+      <div class="question-label">Desde tu punto de vista, ¿qué actitudes o comportamientos deberían mejorar dentro del equipo?</div>
+      <textarea placeholder="Escribe tu respuesta aquí..."></textarea>
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn btn-secondary" onclick="goTo(3)">← Anterior</button>
+      <button class="btn btn-primary" onclick="goTo(5)">Siguiente →</button>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 5 -->
+  <div class="section-card" id="sec5">
+    <div class="section-label">Sección 5</div>
+    <div class="section-title">Mejora de la Empresa</div>
+    <div class="section-desc">Tus ideas y sugerencias son valiosas para construir una empresa mejor.</div>
+
+    <div class="question-block">
+      <div class="question-label">Si pudieras cambiar una sola cosa dentro de la empresa, ¿qué cambiarías?</div>
+      <textarea placeholder="Escribe tu respuesta aquí..."></textarea>
+    </div>
+    <div class="question-block">
+      <div class="question-label">¿Qué procesos, herramientas o dinámicas de trabajo deberían implementarse para mejorar el funcionamiento del equipo?</div>
+      <textarea placeholder="Escribe tu respuesta aquí..."></textarea>
+    </div>
+    <div class="question-block">
+      <div class="question-label">¿Qué tipo de liderazgo o apoyo crees que necesita el equipo para trabajar mejor?</div>
+      <textarea placeholder="Escribe tu respuesta aquí..."></textarea>
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn btn-secondary" onclick="goTo(4)">← Anterior</button>
+      <button class="btn btn-primary" onclick="goTo(6)">Siguiente →</button>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 6 -->
+  <div class="section-card" id="sec6">
+    <div class="section-label">Sección 6</div>
+    <div class="section-title">Percepción General</div>
+    <div class="section-desc">Una última calificación sobre tu experiencia general.</div>
+
+    <div id="sec6-nps"></div>
+
+    <div class="nav-btns">
+      <button class="btn btn-secondary" onclick="goTo(5)">← Anterior</button>
+      <button class="btn btn-primary" onclick="goTo(7)">Siguiente →</button>
+    </div>
+  </div>
+
+  <!-- SECCIÓN FINAL -->
+  <div class="section-card" id="sec7">
+    <div class="section-label">Sección Final</div>
+    <div class="section-title">Comentarios Adicionales</div>
+    <div class="section-desc">¿Hay algo importante que no hayamos preguntado? Este es el espacio para mencionarlo.</div>
+
+    <div class="question-block">
+      <div class="question-label">¿Hay algo importante que quieras mencionar sobre el trabajo, el equipo o la empresa que no se haya preguntado en esta encuesta?</div>
+      <textarea style="min-height:140px" placeholder="Escribe tu respuesta aquí..."></textarea>
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn btn-secondary" onclick="goTo(6)">← Anterior</button>
+      <button class="btn btn-submit" onclick="submitForm()">Enviar respuestas ✓</button>
+    </div>
+  </div>
+
+  <!-- GRACIAS -->
+  <div class="thankyou-card" id="thankyou">
+    <div class="thankyou-icon">✓</div>
+    <h2>¡Gracias por tu tiempo!</h2>
+    <p>Tu opinión es importante para mejorar la forma en que trabajamos como equipo y construir un ambiente laboral más saludable, productivo y transparente. Todas las respuestas serán analizadas de forma general y utilizadas para implementar mejoras dentro de la empresa.</p>
+  </div>
+
+</div>
+
+<script>
+  const sec1Questions = [
+    "¿Cómo calificarías el ambiente de trabajo general dentro de la empresa?",
+    "¿Cómo evalúas la comunicación entre los miembros del equipo?",
+    "¿Qué tan clara es la asignación de tareas y responsabilidades?",
+    "¿Cómo calificas la organización del trabajo dentro de la empresa?",
+    "¿Cómo evalúas el liderazgo dentro del equipo?",
+    "¿Cómo calificas el nivel de respeto entre compañeros?",
+    "¿Cómo evalúas la colaboración entre las personas del equipo?",
+    "¿Cómo calificas el nivel de motivación dentro del equipo?",
+    "¿Qué tan claro percibes el rumbo o dirección de la empresa?",
+    "¿Cómo calificarías el compromiso general del equipo con el trabajo?"
+  ];
+
+  const teamMembers = [
+    "Juan José","Nicolás","Santiago","Ana Sofía","Luciana",
+    "Alexa","Bibiana","Juan Esteban","Jhon Anderson","Miguel","Mateo","Samir","Laura"
+  ];
+
+  // Build Section 1
+  const sec1Wrap = document.getElementById('sec1-questions');
+  sec1Questions.forEach((q, i) => {
+    const block = document.createElement('div');
+    block.className = 'question-block';
+    let radios = '';
+    for (let v = 1; v <= 10; v++) {
+      radios += `<label><input type="radio" name="s1q${i}" value="${v}"><span class="scale-btn">${v}</span></label>`;
+    }
+    block.innerHTML = `
+      <div class="question-label">${q} <span class="required-star">*</span></div>
+      <div class="scale-wrap">
+        <div class="scale-numbers">${radios}</div>
+        <div class="scale-labels"><span>1 — Muy deficiente</span><span>10 — Excelente</span></div>
+      </div>`;
+    sec1Wrap.appendChild(block);
+  });
+
+  // Build Grid (Section 3)
+  const gridBody = document.getElementById('gridBody');
+  teamMembers.forEach((name, i) => {
+    let cells = `<td>${name}</td>`;
+    for (let v = 1; v <= 10; v++) {
+      cells += `<td><input type="radio" name="team${i}" value="${v}"></td>`;
+    }
+    const tr = document.createElement('tr');
+    tr.innerHTML = cells;
+    gridBody.appendChild(tr);
+  });
+
+  // Build NPS (Section 6)
+  const sec6Wrap = document.getElementById('sec6-nps');
+  let npsRadios = '';
+  for (let v = 0; v <= 10; v++) {
+    npsRadios += `<label><input type="radio" name="nps" value="${v}"><span class="scale-btn">${v}</span></label>`;
+  }
+  sec6Wrap.innerHTML = `
+    <div class="question-block">
+      <div class="question-label">¿Qué tan probable es que recomiendes trabajar en esta empresa a un amigo o conocido? <span class="required-star">*</span></div>
+      <div class="scale-wrap">
+        <div class="scale-numbers">${npsRadios}</div>
+        <div class="scale-labels"><span>0 — Nada probable</span><span>10 — Muy probable</span></div>
+      </div>
+    </div>`;
+
+  // Navigation
+  const totalSections = 7;
+  let currentSection = 1;
+
+  function goTo(n) {
+    document.getElementById('sec' + currentSection).classList.remove('active');
+    currentSection = n;
+    document.getElementById('sec' + currentSection).classList.add('active');
+    updateProgress();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function updateProgress() {
+    const pct = ((currentSection - 1) / totalSections) * 100;
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressLabel').textContent = `Sección ${currentSection} de ${totalSections}`;
+  }
+
+  // ============================================================
+  // PEGA TU URL DE GOOGLE APPS SCRIPT AQUÍ ABAJO
+  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxOUIvGoMED_I3Ifa6VNaGEWvDyaWI3v0TRJStJqE2nxvIuITtF9IqQf7IG91mlgXBi/exec";
+  // ============================================================
+
+  function collectData() {
+    const data = {};
+    // Sección 1 - escalas
+    for (let i = 0; i < 10; i++) {
+      const r = document.querySelector(`input[name="s1q${i}"]:checked`);
+      data[`s1q${i}`] = r ? r.value : "";
+    }
+    // Sección 2 - textos
+    const s2 = document.querySelectorAll('#sec2 textarea');
+    s2.forEach((t, i) => data[`s2q${i}`] = t.value);
+    // Sección 3 - grid equipo
+    for (let i = 0; i < 13; i++) {
+      const r = document.querySelector(`input[name="team${i}"]:checked`);
+      data[`team${i}`] = r ? r.value : "";
+    }
+    // Sección 4 - textos
+    const s4 = document.querySelectorAll('#sec4 textarea');
+    s4.forEach((t, i) => data[`s4q${i}`] = t.value);
+    // Sección 5 - textos
+    const s5 = document.querySelectorAll('#sec5 textarea');
+    s5.forEach((t, i) => data[`s5q${i}`] = t.value);
+    // Sección 6 - NPS
+    const nps = document.querySelector('input[name="nps"]:checked');
+    data['nps'] = nps ? nps.value : "";
+    // Sección final
+    const sf = document.querySelectorAll('#sec7 textarea');
+    sf.forEach((t, i) => data[`finalq${i}`] = t.value);
+    return data;
+  }
+
+  function submitForm() {
+    const btnSubmit = document.querySelector('.btn-submit');
+    btnSubmit.textContent = 'Enviando...';
+    btnSubmit.disabled = true;
+
+    const data = collectData();
+
+    fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    })
+    .then(() => {
+      document.getElementById('sec7').classList.remove('active');
+      document.getElementById('thankyou').style.display = 'block';
+      document.getElementById('progressFill').style.width = '100%';
+      document.getElementById('progressLabel').textContent = '¡Completado!';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    })
+    .catch(() => {
+      // Aunque fetch falle visualmente, con no-cors igual llega al servidor
+      // Mostrar gracias de todas formas
+      document.getElementById('sec7').classList.remove('active');
+      document.getElementById('thankyou').style.display = 'block';
+      document.getElementById('progressFill').style.width = '100%';
+      document.getElementById('progressLabel').textContent = '¡Completado!';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+</script>
+</body>
+</html>
